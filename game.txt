@@ -2,6 +2,7 @@ title Pakene
 author we
 homepage aalto.fi
 flickscreen 15x15
+realtime_interval 0.5
 
 ========
 OBJECTS
@@ -73,6 +74,94 @@ black yellow
 01010
 10101
 
+Number0
+white black
+01100
+10010
+10010
+10010
+01100
+
+Number1
+white black
+01100
+00100
+00100
+00100
+01110
+
+Number2
+white black
+01100
+10010
+00100
+01000
+11110
+
+Number3
+white black
+01100
+10010
+00100
+10010
+01100
+
+Number4
+white black
+00110
+01010
+11110
+00010
+00010
+
+Number5
+white black
+11100
+10000
+11000
+00100
+11000
+
+Number6
+white black
+01100
+10000
+11100
+10010
+01100
+
+Number7
+white black
+11110
+00010
+00100
+00100
+01000
+
+Number8
+white black
+01100
+10010
+01100
+10010
+01100
+
+Number9
+white black
+01100
+10010
+01110
+00010
+01100
+
+BiggerThan9Number
+red black
+00000
+01110
+01110
+01110
+00000
+
 =======
 LEGEND
 =======
@@ -88,6 +177,18 @@ p = Player
 S = Ship1
 H = Ship2
 e = Energy
+0 = Number0
+1 = Number1
+2 = Number2
+3 = Number3
+4 = Number4
+5 = Number5
+6 = Number6
+7 = Number7
+8 = Number8
+9 = Number9
+Number = Number0 or Number1 or Number2 or Number3 or Number4 or Number5 or Number6 or Number7 or Number8 or Number9 or BiggerThan9Number
+
 
 =======
 SOUNDS
@@ -100,21 +201,43 @@ COLLISIONLAYERS
 ================
 (Tässä on pakko asettaa "törmäystasot" KAIKILLE objekteille)
 
-Background, Ship2
+Background
+BackgroundCritical
+Ship2
 Energy
-Wall1, Wall2, Wall3, Wall4, Ship1, Player
+Wall1, Wall2, Wall3, Wall4, Ship1, Player, Number0, Number1, Number2, Number3, Number4, Number5, Number6, Number7, Number8, Number9, BiggerThan9Number
 
 ======
 RULES
 ======
+
 (Hoidetaan 'suuren' pelaajan kokonaisuuden)
 (hitto [ > Player | Player ] -> [ Player | Player ])
 
-("late" ajaa säännön vasta toiminnon tapahduttua. Tällöin sääntö ajetaan vasta pelaajan liikuttua jolloin restart ajetaan samalla hetkellä, kun pelaaja liikkuu laavan päälle eikä vasta seuraavan alussa)
+(Logic for the countdown timer)
+LEFT [stationary Number0 | Number9] -> [BiggerThan9Number | Number8]
+LEFT [stationary Number0 | Number8] -> [BiggerThan9Number | Number7]
+LEFT [stationary Number0 | Number7] -> [BiggerThan9Number | Number6]
+LEFT [stationary Number0 | Number6] -> [BiggerThan9Number | Number5]
+LEFT [stationary Number0 | Number5] -> [BiggerThan9Number | Number4]
+LEFT [stationary Number0 | Number4] -> [BiggerThan9Number | Number3]
+LEFT [stationary Number0 | Number3] -> [BiggerThan9Number | Number2]
+LEFT [stationary Number0 | Number2] -> [BiggerThan9Number | Number1]
+LEFT [stationary Number0 | Number1] -> [BiggerThan9Number | Number0]
 
+LEFT [stationary Number1 | Number] -> [Number0 | Number]
+LEFT [stationary Number2 | Number] -> [Number1 | Number]
+LEFT [stationary Number3 | Number] -> [Number2 | Number]
+LEFT [stationary Number4 | Number] -> [Number3 | Number]
+LEFT [stationary Number5 | Number] -> [Number4 | Number]
+LEFT [stationary Number6 | Number] -> [Number5 | Number]
+LEFT [stationary Number7 | Number] -> [Number6 | Number]
+LEFT [stationary Number8 | Number] -> [Number7 | Number]
+LEFT [stationary Number9 | Number] -> [Number8 | Number]
+LEFT [stationary BiggerThan9Number | Number] -> [Number9 | Number]
 
+(LEFT [stationary Number0 | Number0] -> restart)
 
-(Markon haluaisi osata avata oven, jos hän "on avaimellinen")
 
 ==============
 WINCONDITIONS
@@ -158,7 +281,7 @@ MESSAGE Pakene
 #....::..::.......@@@@.......#######...#######............................#
 #..................@@@.......#######...#######............................#
 #............................#######...#######............................#
-####################################...#############..###############.#####
+######################99############...#############..###############.#####
 ####################################...#############..###############.#####
 #............................#######...#######............................#
 #............................###å###...###å###............................#
