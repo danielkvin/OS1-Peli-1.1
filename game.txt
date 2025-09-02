@@ -1,0 +1,85 @@
+title Pakene
+author we
+homepage aalto.fi
+flickscreen 15x15
+
+========
+OBJECTS
+========
+
+Background
+darkgray 
+
+Wall
+lightbrown
+
+Player
+green
+
+=======
+LEGEND
+=======
+(Aseta tässä lyhenteet luomillesi objekteille)
+
+. = Background
+(player määrittää liikuteltavan hahmon, voit määrittää useita käyttämällä "OR" merkintää)
+p = Player
+# = Wall
+
+
+
+=======
+SOUNDS
+=======
+
+(Tähän kohtaan voi lisätä ääniä peliin)
+
+================
+COLLISIONLAYERS
+================
+(Tässä on pakko asettaa "törmäystasot" KAIKILLE objekteille)
+
+Background
+Wall, Player
+
+======
+RULES
+======
+(Marko on fiksu, joten hän keksii, että laatikonhan voisi työntää laavan päälle päästäkseen ovelle)
+
+("late" ajaa säännön vasta toiminnon tapahduttua. Tällöin sääntö ajetaan vasta pelaajan liikuttua jolloin restart ajetaan samalla hetkellä, kun pelaaja liikkuu laavan päälle eikä vasta seuraavan alussa)
+
+
+
+(Markon haluaisi osata avata oven, jos hän "on avaimellinen")
+
+==============
+WINCONDITIONS
+==============
+
+
+=======
+LEVELS
+=======
+
+MESSAGE Pakene
+
+(Sijoita alla olevaan karttaan luomasi objektit)
+
+##############################
+#p............##.............#
+#.............##.............#
+#.............##.............#
+#.............##.............#
+#.............##.............#
+#.............##.............#
+#............................#
+#............................#
+#.............##.............#
+#.............##.............#
+#.............##.............#
+#.............##.............#
+#.............##.............#
+##############################
+
+MESSAGE Voitit pelin.
