@@ -150,6 +150,19 @@ black yellow
 01010
 10101
 
+(Disappearing floor room)
+DisappearingFloor
+brown
+
+(Moving enemy)
+MovingEnemy
+gray black
+.000.
+01010
+00000
+00000
+.000.
+
 Number0
 white black
 01100
@@ -248,6 +261,8 @@ q = Player2
 : = Wall3
 å = Wall4
 S = Ship1
+D = DisappearingFloor
+R = MovingEnemy
 H = Target
 F = Fueling7
 Fueling = Fueling1 or Fueling2 or Fueling3 or Fueling4 or Fueling5 or Fueling6 or Fueling7
@@ -282,9 +297,10 @@ COLLISIONLAYERS
 
 Background
 BackgroundCritical
+DisappearingFloor
 Target, FuelingOld, Fueling, Space
 Energy
-Wall1, Wall2, Wall3, Wall4, Ship1, Player, Number0, Number1, Number2, Number3, Number4, Number5, Number6, Number7, Number8, Number9, BiggerThan9Number
+Wall1, Wall2, Wall3, Wall4, Ship1, Player, Number0, Number1, Number2, Number3, Number4, Number5, Number6, Number7, Number8, Number9, BiggerThan9Number, MovingEnemy
 
 ======
 RULES
@@ -311,7 +327,7 @@ LEFT [stationary Player][Number8 | Number] -> [Player][Number7 | Number]
 LEFT [stationary Player][Number9 | Number] -> [Player][Number8 | Number]
 LEFT [stationary Player][BiggerThan9Number | Number] -> [Player][Number9 | Number]
 
-LEFT [stationary Number0 | Number0] -> message Game Over, bruh
+LEFT [stationary Player][stationary Number0 | Number0] -> message Game Over, bruh
 LEFT [stationary Number4 | Number5] -> message Time is running out !
 + [Background] -> [BackgroundCritical]
 
@@ -346,12 +362,24 @@ late [Player | Player][Player Fueling | Number3] -> [Player | Player][Fueling | 
 late [Player | Player][Player Fueling | Number2] -> [Player | Player][Fueling | Number1]
 late [Player | Player][Player Fueling | Number1] -> [Player | Player][        | Number0])
 
+( Disappearing floor )
+random [stationary Player DisappearingFloor][DisappearingFloor] -> [Player DisappearingFloor][Space]
+random [stationary Player DisappearingFloor][DisappearingFloor] -> [Player DisappearingFloor][Space]
+
+( Moving enemy )
+[moving Player][stationary MovingEnemy] -> [moving Player][randomdir MovingEnemy]
+
+[> Player | MovingEnemy] -> [ | MovingEnemy]
+[> MovingEnemy | Player] -> [MovingEnemy | ]
+
 (Space kill)
 [ > Player | Space ] -> [ | Space]
+(Bug: You can kill the last player and get stuck. Game doesnt restart or anything.)
 
 ==============
 WINCONDITIONS
 ==============
+
 No Fueling
 All player ON Target
 
@@ -361,6 +389,7 @@ LEVELS
 
 MESSAGE Olette jumissa avaruusaluksella. Teidän on paetta, mutta pelastusalus vaatii energia.
 MESSAGE Kerää energiaa, mutta huomaa, että robotti laajenee sen keräessä!
+MESSAGE Instructions: Press R to restart if you die.
 
 (Peliarea)
 (BTW!!, press e while playing to see whole map)
@@ -374,6 +403,11 @@ MESSAGE Kerää energiaa, mutta huomaa, että robotti laajenee sen keräessä!
   - When fueling, the multiplayer thingy needs to be on the same line as the fuel counter. Cant fuel with vertical multiplayer thingamabob. This text doesnt even make sense but ok. 🫡 FIXED
   - Game over is only a message. Cannot restart the game. Can only continue and immediately reach game over again.
   - Cant fuel if the remaining players dont touch sides.
+)
+
+
+(TODO:
+  - Improve disappearing floor puzzle room.
 )
 
 ###########################################################################
@@ -392,42 +426,42 @@ MESSAGE Kerää energiaa, mutta huomaa, että robotti laajenee sen keräessä!
 #.............##.............##...:.....:...##.............##.............#
 ##############################99####...####################################
 ####################################...####################################
-#............................#######...#######............................#
-#.e................@@@.......#######...#######............................#
-#....::..::........@@....@...#######...#######............................#
-#...::....::......@@..e......#####@@...@@#####............................#
-#..::...e..::................####@@.....@@####............................#
-#..::...................@@@...............................................#
-#..::.e................@@@@...............................................#
-#..::...................@@................................................#
+#............................#######...#######.................DDDDeDDD.e.#
+#.e................@@@.......#######...#######....e.......e....DD''DDDD.e.#
+#....::..::........@@....@...#######...#######.................DDDDDDDD..e#
+#...::....::......@@..e......#####@@...@@#####......R..R.......DDDDDDDDDDD#
+#..::...e..::................####@@.....@@####.................DDDD'D'DeDD#
+#..::...................@@@.........................R..R.......DDDD'''DDDD#
+#..::.e................@@@@..................p.................DDDD'DDDD'D#
+#..::...................@@...........................R.........DDDDDDDDDDD#
 #..::..e...::................######.....######............................#
-#...::....::......@@@........#######...#######............................#
-#....::..::.......@@@@.......#######...#######............................#
-#..................@@@.......#######...#######............................#
+#...::....::......@@@........#######...#######.............e..............#
+#....::..::.......@@@@.......#######...#######.........................e..#
+#..................@@@.......#######...#######........................e...#
 #............................#######...#######............................#
 99#############99#############99####...######99#####..######99#######.#####
 ####################################...#############..###############.#####
 #............................#######...#######............................#
 #..e.........................###å###...###å###............................#
 #............................##ååå##...##ååå##............................#
-#............................###å###...###å###............................#
-#.e..........................######.....######............................#
-#.........................................................................#
-#....###::::::::::::###...................................................#
+#............................###å###...###å###................e...........#
+#.e..........................######.....######......R.....................#
+#..........................................................e..............#
+#....###::::::::::::###....................................e...e.......R..#
 #....###::::::::::::###............@@.....................................#
 #....###::::::::::::###..@@..######@@...######............................#
 #.....................@..@...###å###@..###å###............................#
-#.........................@..##ååå##...##ååå##............................#
+#.........................@..##ååå##...##ååå##..................R.........#
 #...................@@@..@@..###å###..@###å###............................#
 #............................#######.@@#######............................#
-99#############99#...#########99####...######99#############99#############
-##################...###############...######################''''''''''''''
+99#############99#...#########99####...######99####.########99#############
+##################...###############...############.#########''''''''''''''
 #.............##...........................................##''''''''''''''
 #.............##...........................................##..''''''''''''
 #.............##...........................................##..''''''''''''
 #.............##...............................................''''''''''''
 #.............##...............................................''''''''''''
-#.............##............................p.ee.....SSSS......''''''''''''
+#.............##..............................ee.....SSSS......''''''''''''
 #.............##..............................ee......HS:S.....''''''''''''
 #.............##..............................ee.....SSSSS.....''''''''''''
 #.............##..............................ee.....F.........''''''''''''
