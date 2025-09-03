@@ -60,13 +60,70 @@ white red
 10001
 11111
 
-Fueling (where dump players)
+FuelingOld (where dump players)
 yellow gray
 01110
 00000
 10001
 00000
 01110
+
+(where dump players)
+Fueling1
+red black
+01100
+00100
+00100
+00100
+01110
+
+Fueling2
+red black
+01100
+10010
+00100
+01000
+11110
+
+Fueling3
+red black
+01100
+10010
+00100
+10010
+01100
+
+Fueling4
+red black
+00110
+01010
+11110
+00010
+00010
+
+Fueling5
+red black
+11100
+10000
+11000
+00100
+11000
+
+Fueling6
+red black
+01100
+10000
+11100
+10010
+01100
+
+Fueling7
+red black
+11110
+00010
+00100
+00100
+01000
 
 Energy
 yellow
@@ -174,18 +231,11 @@ white black
 01100
 
 BiggerThan9Number
-red black
-00000
-01110
-01110
-01110
-00000
+red
 
 =======
 LEGEND
 =======
-(Aseta tässä lyhenteet luomillesi objekteille)
-(player määrittää liikuteltavan hahmon, voit määrittää useita käyttämällä "OR" merkintää)
 
 . = Background
 , = BackgroundCritical
@@ -199,7 +249,8 @@ q = Player2
 å = Wall4
 S = Ship1
 H = Target
-F = Fueling
+F = Fueling7
+Fueling = Fueling1 or Fueling2 or Fueling3 or Fueling4 or Fueling5 or Fueling6 or Fueling7
 e = Energy
 0 = Number0
 1 = Number1
@@ -213,8 +264,6 @@ e = Energy
 9 = Number9
 Number = Number0 or Number1 or Number2 or Number3 or Number4 or Number5 or Number6 or Number7 or Number8 or Number9 or BiggerThan9Number
 GenWall = Wall1 or Wall2 or Wall3 or Wall4 or Ship1 or Number
-
-
 
 =======
 SOUNDS
@@ -233,7 +282,7 @@ COLLISIONLAYERS
 
 Background
 BackgroundCritical
-Target, Fueling, Space
+Target, FuelingOld, Fueling, Space
 Energy
 Wall1, Wall2, Wall3, Wall4, Ship1, Player, Number0, Number1, Number2, Number3, Number4, Number5, Number6, Number7, Number8, Number9, BiggerThan9Number
 
@@ -280,16 +329,25 @@ LEFT [stationary Number4 | Number5] -> message Time is running out !
 
 
 ( --- With Fueling and Winning ---)
-[ > Player | Fueling | Number7] -> [ | Fueling | Number6]
-[ > Player | Fueling | Number6] -> [ | Fueling | Number5]
-[ > Player | Fueling | Number5] -> [ | Fueling | Number4]
-[ > Player | Fueling | Number4] -> [ | Fueling | Number3]
-[ > Player | Fueling | Number3] -> [ | Fueling | Number2]
-[ > Player | Fueling | Number2] -> [ | Fueling | Number1]
-[ > Player | Fueling | Number1] -> [ | | Number0]
+late [Player | Player][Player Fueling7] -> [Player | Player][Fueling6]
+late [Player | Player][Player Fueling6] -> [Player | Player][Fueling5]
+late [Player | Player][Player Fueling5] -> [Player | Player][Fueling4]
+late [Player | Player][Player Fueling4] -> [Player | Player][Fueling3]
+late [Player | Player][Player Fueling3] -> [Player | Player][Fueling2]
+late [Player | Player][Player Fueling2] -> [Player | Player][Fueling1]
+late [Player | Player][Player Fueling1] -> [Player | Player][        ]
+
+( Old Fueling code )
+(late [Player | Player][Player Fueling | Number7] -> [Player | Player][Fueling | Number6]
+late [Player | Player][Player Fueling | Number6] -> [Player | Player][Fueling | Number5]
+late [Player | Player][Player Fueling | Number5] -> [Player | Player][Fueling | Number4]
+late [Player | Player][Player Fueling | Number4] -> [Player | Player][Fueling | Number3]
+late [Player | Player][Player Fueling | Number3] -> [Player | Player][Fueling | Number2]
+late [Player | Player][Player Fueling | Number2] -> [Player | Player][Fueling | Number1]
+late [Player | Player][Player Fueling | Number1] -> [Player | Player][        | Number0])
 
 (Space kill)
-[ > Player | Space ] -> [| Space]
+[ > Player | Space ] -> [ | Space]
 
 ==============
 WINCONDITIONS
@@ -301,7 +359,7 @@ All player ON Target
 LEVELS
 =======
 
-MESSAGE Olette jumissa avaruusaluksella. Teidän on pakeneva, mutta pelastusalus vaatii energia.
+MESSAGE Olette jumissa avaruusaluksella. Teidän on paetta, mutta pelastusalus vaatii energia.
 MESSAGE Kerää energiaa, mutta huomaa, että robotti laajenee sen keräessä!
 
 (Peliarea)
@@ -311,16 +369,23 @@ MESSAGE Kerää energiaa, mutta huomaa, että robotti laajenee sen keräessä!
   - You can dupe energy, if as Player2 you take multiple energies with multiple yous.
 )
 
+(More bugs:
+  - You can fuel the escape ship with the last player breaking the game. FIXED
+  - When fueling, the multiplayer thingy needs to be on the same line as the fuel counter. Cant fuel with vertical multiplayer thingamabob. This text doesnt even make sense but ok. 🫡 FIXED
+  - Game over is only a message. Cannot restart the game. Can only continue and immediately reach game over again.
+  - Cant fuel if the remaining players dont touch sides.
+)
+
 ###########################################################################
 #.............##.............##.....@@@.....##.............##.............#
 #.............##.............##....@@@@@....##.............##.............#
 #.............##.............##...@@@@@@@...##.............##.............#
 #.............##.............##...:.....:...##.............##.............#
 #.............##.............##...:.....:...##.............##.............#
-#.............##.............##...:.....:...##.............##.............#
-#.............##.............##...:.....:...##.............##.............#
-#.............##.............##...:.....:...##.............##.............#
-#.............##.............##...:.....:...##.............##.............#
+#.....#.#.....##.............##...:.....:...##.............##.............#
+#.....#.#.....##.............##...:.....:...##.............##.............#
+#...#.....#...##.............##...:.....:...##.............##.............#
+#....#####....##.............##...:.....:...##.............##.............#
 #.............##.............##...:.....:...##.............##.............#
 #.............##.............##...:.....:...##.............##.............#
 #.............##.............##...:.....:...##.............##.............#
@@ -365,7 +430,7 @@ MESSAGE Kerää energiaa, mutta huomaa, että robotti laajenee sen keräessä!
 #.............##............................p.ee.....SSSS......''''''''''''
 #.............##..............................ee......HS:S.....''''''''''''
 #.............##..............................ee.....SSSSS.....''''''''''''
-#.............##..............................ee.....F7........''''''''''''
+#.............##..............................ee.....F.........''''''''''''
 #.............##..............................ee...............''''''''''''
 #.............##..............................ee...........##..''''''''''''
 #.............##..............................ee...........##..''''''''''''
